@@ -1,0 +1,10 @@
+node_modules/
+dist/
+# build output of `npm run single` (49.7 MiB) and its half-resolution sky
+RING-ZERO_*.html
+assets_single/
+# third-party reference material, not part of this project
+ref/
+__pycache__/
+*.log
+.DS_Store

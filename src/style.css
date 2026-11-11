@@ -1,0 +1,142 @@
+:root {
+  --ink: #f2f5f7;
+  --dim: rgba(242, 245, 247, 0.62);
+  --accent: #5fd8ff;
+  --warn: #ff5a3c;
+  --font: "Inter", "Helvetica Neue", "Segoe UI", "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; background: #000; overflow: hidden; font-family: var(--font); color: var(--ink); user-select: none; -webkit-font-smoothing: antialiased; }
+#view { position: fixed; inset: 0; width: 100%; height: 100%; display: block; }
+.hidden { display: none !important; }
+kbd { display: inline-block; min-width: 1.7em; padding: 0.12em 0.45em; margin-right: 0.3em; border: 1px solid rgba(255, 255, 255, 0.35); border-radius: 4px; font: 600 0.78em var(--font); text-align: center; background: rgba(255, 255, 255, 0.07); }
+
+/* ------------------------------------------------------------------ screens */
+.screen { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; z-index: 20; }
+#loading { background: #07090b; flex-direction: column; gap: 22px; }
+#loading .brand { text-align: center; }
+.kicker { font-size: 12px; letter-spacing: 0.34em; color: var(--dim); }
+h1 { margin: 10px 0 0; font-size: clamp(54px, 9vw, 120px); font-weight: 200; letter-spacing: 0.24em; margin-right: -0.24em; line-height: 1; }
+h2 { margin: 6px 0 18px; font-size: 44px; font-weight: 200; letter-spacing: 0.2em; }
+h3 { margin: 0 0 10px; font-size: 11px; letter-spacing: 0.3em; color: var(--dim); font-weight: 600; }
+.progress { width: min(420px, 60vw); height: 2px; background: rgba(255, 255, 255, 0.14); }
+#load-fill { height: 100%; width: 0; background: var(--accent); transition: width 0.25s ease; box-shadow: 0 0 12px var(--accent); }
+#load-status { font-size: 12px; letter-spacing: 0.18em; color: var(--dim); text-transform: uppercase; }
+
+#menu, #pause, #end { background: radial-gradient(ellipse at center, rgba(6, 9, 12, 0.35) 0%, rgba(6, 9, 12, 0.78) 100%); backdrop-filter: blur(3px); }
+.panel { width: min(880px, 92vw); padding: 8px 0; text-shadow: 0 1px 14px rgba(0, 0, 0, 0.6); }
+.panel.small { width: min(460px, 90vw); text-align: center; }
+.brief { max-width: 640px; margin: 22px 0 26px; font-size: 16px; line-height: 1.65; color: rgba(242, 245, 247, 0.86); }
+button { display: block; margin: 10px 0; padding: 13px 34px; font: 600 13px var(--font); letter-spacing: 0.3em; color: var(--ink); background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.3); cursor: pointer; transition: all 0.15s ease; }
+.panel.small button { width: 100%; }
+button:hover { background: rgba(255, 255, 255, 0.16); border-color: #fff; }
+button.primary { background: var(--accent); border-color: var(--accent); color: #041018; box-shadow: 0 0 28px rgba(95, 216, 255, 0.35); }
+button.primary:hover { background: #9be8ff; }
+.cols { display: flex; gap: 56px; margin-top: 30px; flex-wrap: wrap; }
+.controls div { margin: 7px 0; font-size: 13px; color: var(--dim); }
+.controls span { margin-right: 14px; }
+.settings label { display: flex; align-items: center; justify-content: space-between; gap: 18px; width: 300px; margin: 8px 0; font-size: 13px; color: var(--dim); }
+.settings select, .settings input { width: 150px; accent-color: var(--accent); }
+.settings select { padding: 4px 6px; background: rgba(0, 0, 0, 0.5); color: var(--ink); border: 1px solid rgba(255, 255, 255, 0.3); font: 13px var(--font); }
+.credits { margin-top: 30px; max-width: 720px; font-size: 11px; line-height: 1.6; color: rgba(242, 245, 247, 0.45); }
+#end-stats { margin: 0 0 20px; font-size: 14px; line-height: 2; color: var(--dim); }
+#end-stats b { color: var(--ink); font-weight: 600; margin-left: 10px; }
+
+/* ------------------------------------------------------------------ HUD */
+#hud { position: fixed; inset: 0; z-index: 10; pointer-events: none; text-shadow: 0 1px 6px rgba(0, 0, 0, 0.55); }
+/* the late sky is bright: a soft shade keeps the compass and objective readable against it */
+#hud::before { content: ''; position: absolute; left: 0; right: 0; top: 0; height: 120px; background: linear-gradient(rgba(4, 8, 12, 0.42), rgba(4, 8, 12, 0)); }
+#crosshair { position: absolute; left: 50%; top: 50%; --gap: 7px; transition: opacity 0.12s; }
+#crosshair i { position: absolute; background: #fff; box-shadow: 0 0 2px rgba(0, 0, 0, 0.8); }
+#crosshair .t, #crosshair .b { width: 2px; height: 8px; left: -1px; }
+#crosshair .l, #crosshair .r { width: 8px; height: 2px; top: -1px; }
+#crosshair .t { bottom: var(--gap); } #crosshair .b { top: var(--gap); }
+#crosshair .l { right: var(--gap); } #crosshair .r { left: var(--gap); }
+#crosshair b { position: absolute; width: 2px; height: 2px; left: -1px; top: -1px; background: #fff; box-shadow: 0 0 2px rgba(0, 0, 0, 0.8); }
+#hitmarker { position: absolute; left: 50%; top: 50%; width: 26px; height: 26px; margin: -13px; opacity: 0; transform: rotate(45deg) scale(1);
+  background: linear-gradient(#fff, #fff) center/2px 100% no-repeat, linear-gradient(#fff, #fff) center/100% 2px no-repeat;
+  -webkit-mask: radial-gradient(circle, transparent 5px, #000 6px); mask: radial-gradient(circle, transparent 5px, #000 6px); }
+#hitmarker.hit { animation: hm 0.18s ease-out; }
+#hitmarker.kill { animation: hmk 0.4s ease-out; background: linear-gradient(var(--warn), var(--warn)) center/3px 100% no-repeat, linear-gradient(var(--warn), var(--warn)) center/100% 3px no-repeat; }
+@keyframes hm { 0% { opacity: 1; transform: rotate(45deg) scale(0.7); } 100% { opacity: 0; transform: rotate(45deg) scale(1.15); } }
+@keyframes hmk { 0% { opacity: 1; transform: rotate(45deg) scale(0.8); } 60% { opacity: 1; } 100% { opacity: 0; transform: rotate(45deg) scale(1.7); } }
+#damage-dirs { position: absolute; left: 50%; top: 50%; }
+#damage-dirs .dir { position: absolute; left: -90px; top: -90px; width: 180px; height: 180px; border-radius: 50%; border: 5px solid transparent; border-top-color: rgba(255, 70, 40, 0.9); filter: blur(1px); animation: dd 1.1s ease-out forwards; }
+@keyframes dd { 0% { opacity: 1; } 100% { opacity: 0; } }
+#hurt { position: absolute; inset: 0; box-shadow: inset 0 0 160px 40px rgba(210, 20, 10, 0.55); opacity: 0; transition: opacity 0.25s; }
+#barrier-warn { position: absolute; left: 50%; top: 31%; transform: translateX(-50%); font-size: 12px; letter-spacing: 0.3em; color: var(--accent); }
+
+#compass { position: absolute; top: 18px; left: 50%; width: min(460px, 46vw); height: 30px; transform: translateX(-50%); overflow: hidden;
+  -webkit-mask: linear-gradient(90deg, transparent, #000 18%, #000 82%, transparent); mask: linear-gradient(90deg, transparent, #000 18%, #000 82%, transparent); }
+#compass-tape { position: absolute; inset: 0; }
+#compass-tape span { position: absolute; top: 0; left: 50%; font-size: 11px; letter-spacing: 0.08em; color: var(--dim); white-space: nowrap; will-change: transform; text-shadow: 0 0 4px rgba(0, 0, 0, 0.9); }
+#compass-tape span.card { color: var(--ink); font-weight: 600; }
+#compass-tape span.tick { top: 16px; width: 1px; height: 6px; background: rgba(255, 255, 255, 0.35); }
+#compass-tape span.obj { top: 12px; font-size: 12px; font-weight: 700; color: var(--warn); }
+#compass-tape span.obj.cut { color: var(--accent); opacity: 0.55; }
+#compass-tape span.foe { top: 21px; width: 5px; height: 5px; border-radius: 50%; background: var(--warn); }
+#compass .needle { position: absolute; left: 50%; bottom: 0; width: 1px; height: 9px; background: #fff; }
+#markers div { position: absolute; left: 0; top: 0; text-align: center; font-size: 11px; letter-spacing: 0.1em; color: var(--warn); will-change: transform; }
+#markers div b { display: block; width: 22px; height: 22px; margin: 0 auto 3px; line-height: 20px; border: 1.5px solid var(--warn); transform: rotate(45deg); font-size: 12px; }
+#markers div b i { display: block; transform: rotate(-45deg); font-style: normal; }
+#markers div.cut { display: none; }
+#interact { position: absolute; left: 50%; top: 62%; transform: translateX(-50%); text-align: center; font-size: 13px; letter-spacing: 0.14em; white-space: nowrap; }
+#interact .bar { width: 220px; height: 3px; margin: 9px auto 0; background: rgba(255, 255, 255, 0.2); }
+#interact-fill { display: block; height: 100%; width: 0; background: var(--accent); box-shadow: 0 0 10px var(--accent); }
+#radio { position: absolute; left: 50%; bottom: 112px; transform: translateX(-50%); max-width: min(720px, 78vw); padding: 9px 16px; background: rgba(6, 9, 12, 0.5); border-left: 2px solid var(--accent);
+  font-size: 15px; line-height: 1.5; opacity: 0; transition: opacity 0.35s; text-shadow: none; }
+#radio.show { opacity: 1; }
+#radio-who { margin-right: 12px; font-size: 11px; letter-spacing: 0.24em; color: var(--accent); }
+#top { position: absolute; top: 54px; left: 50%; transform: translateX(-50%); text-align: center; }
+#wave-label { font-size: 12px; letter-spacing: 0.4em; margin-right: -0.4em; color: var(--ink); text-shadow: 0 0 6px rgba(0, 0, 0, 0.95), 0 1px 2px rgba(0, 0, 0, 0.8); }
+#hostiles { margin-top: 6px; font-size: 13px; letter-spacing: 0.3em; margin-right: -0.3em; text-shadow: 0 0 6px rgba(0, 0, 0, 0.95), 0 1px 2px rgba(0, 0, 0, 0.8); }
+#hostile-count { font-weight: 700; color: var(--warn); }
+#banner { position: absolute; left: 50%; top: 21%; transform: translateX(-50%); text-align: center; opacity: 0; transition: opacity 0.5s; white-space: nowrap; }
+#banner.show { opacity: 1; }
+#banner-title { font-size: clamp(30px, 4.6vw, 58px); font-weight: 200; letter-spacing: 0.32em; margin-right: -0.32em; }
+#banner-sub { margin-top: 10px; font-size: 13px; letter-spacing: 0.34em; margin-right: -0.34em; color: var(--dim); }
+#toasts { position: absolute; right: 34px; top: 30px; text-align: right; font-size: 12px; letter-spacing: 0.16em; }
+#toasts div { margin-bottom: 6px; animation: toast 3.2s ease forwards; }
+#toasts .plus { color: var(--accent); }
+@keyframes toast { 0% { opacity: 0; transform: translateX(14px); } 8% { opacity: 1; transform: none; } 80% { opacity: 1; } 100% { opacity: 0; } }
+
+#vitals { position: absolute; left: 38px; bottom: 34px; width: 250px; }
+#vitals .label { font-size: 10px; letter-spacing: 0.34em; color: var(--dim); margin-bottom: 7px; }
+#vitals .bar { position: relative; height: 5px; background: rgba(255, 255, 255, 0.16); }
+#health-fill, #health-lag { position: absolute; left: 0; top: 0; bottom: 0; width: 100%; }
+#health-fill { background: #fff; z-index: 2; transition: width 0.12s; }
+#health-lag { background: var(--warn); transition: width 0.7s 0.25s; }
+#vitals.low #health-fill { background: var(--warn); }
+#health-num { margin-top: 6px; font-size: 26px; font-weight: 300; font-variant-numeric: tabular-nums; }
+#ammo { position: absolute; right: 38px; bottom: 34px; text-align: right; }
+#weapon-name { font-size: 10px; letter-spacing: 0.34em; margin-right: -0.34em; color: var(--dim); }
+#ammo .count { font-variant-numeric: tabular-nums; line-height: 1; margin-top: 4px; }
+#ammo-mag { font-size: 54px; font-weight: 200; }
+#ammo .sep { font-size: 22px; color: var(--dim); margin: 0 6px; }
+#ammo-res { font-size: 22px; font-weight: 300; color: var(--dim); }
+#ammo.low #ammo-mag { color: var(--warn); }
+#ammo-pips { display: flex; gap: 2px; justify-content: flex-end; margin-top: 8px; }
+#ammo-pips i { width: 4px; height: 9px; background: rgba(255, 255, 255, 0.9); }
+#ammo-pips i.off { background: rgba(255, 255, 255, 0.18); }
+#reload-hint { margin-top: 9px; font-size: 11px; letter-spacing: 0.3em; color: var(--warn); animation: blink 0.9s infinite; }
+@keyframes blink { 50% { opacity: 0.35; } }
+#score { position: absolute; left: 38px; top: 28px; font-size: 22px; font-weight: 300; letter-spacing: 0.1em; font-variant-numeric: tabular-nums; }
+#fps { position: absolute; left: 38px; top: 60px; font: 11px/1.5 ui-monospace, Menlo, monospace; color: var(--dim); white-space: pre; }
+
+/* ------------------------------------------------------------------ touch controls */
+#touch { position: fixed; inset: 0; z-index: 12; pointer-events: none; touch-action: none; }
+#hud.hidden ~ #touch { display: none; }
+#touch button, #t-stick { position: absolute; pointer-events: auto; touch-action: none; margin: 0; padding: 0; border-radius: 50%; color: var(--ink); background: rgba(10, 14, 18, 0.34);
+  border: 1px solid rgba(255, 255, 255, 0.4); font: 600 10px var(--font); letter-spacing: 0.12em; -webkit-tap-highlight-color: transparent; }
+#touch button:active, #touch button.on { background: rgba(95, 216, 255, 0.4); border-color: var(--accent); }
+#t-stick { left: max(22px, env(safe-area-inset-left)); bottom: 26px; width: 132px; height: 132px; }
+#t-stick i { position: absolute; left: 50%; top: 50%; width: 54px; height: 54px; margin: -27px; border-radius: 50%; background: rgba(255, 255, 255, 0.5); }
+#t-fire { right: max(26px, env(safe-area-inset-right)); bottom: 44px; width: 92px; height: 92px; font-size: 12px; }
+#t-aim { right: 132px; bottom: 30px; width: 62px; height: 62px; }
+#t-jump { right: 40px; bottom: 150px; width: 58px; height: 58px; }
+#t-reload { right: 118px; bottom: 112px; width: 58px; height: 58px; }
+#t-use { right: 196px; bottom: 54px; width: 58px; height: 58px; }
+#t-pause { right: 20px; top: 16px; width: 40px; height: 40px; }
+body.touch #vitals { left: 24px; bottom: 176px; width: 170px; }
+body.touch #ammo { right: 24px; bottom: 226px; }
+body.touch #radio { bottom: 30px; left: 46%; max-width: 46vw; font-size: 13px; }

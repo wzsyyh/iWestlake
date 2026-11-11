@@ -1,0 +1,27 @@
+{
+  "name": "iwestlake-fps",
+  "version": "1.0.0",
+  "private": true,
+  "description": "RING ZERO \u2014 a small photoreal FPS set in the Academic Ring courtyard of Westlake University's Yungu Campus",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host",
+    "build": "vite build",
+    "start": "vite preview --host --port 4173",
+    "bake": "node tools/bake.mjs --rays 96 --bounces 4",
+    "assets": "python3 tools/build_assets.py && python3 tools/build_tree.py && node tools/make_small_sky.mjs",
+    "playtest": "node tools/playtest.mjs",
+    "shot": "node tools/shot.mjs",
+    "single": "vite build && node tools/build_single.mjs"
+  },
+  "dependencies": {
+    "n8ao": "^2.0.1",
+    "postprocessing": "^6.39.6",
+    "three": "^0.175.0",
+    "three-mesh-bvh": "^0.9.18"
+  },
+  "devDependencies": {
+    "playwright": "^1.65.0",
+    "vite": "^8.3.8"
+  }
+}

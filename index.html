@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>RING ZERO — Westlake University, Yungu Campus</title>
+  <link rel="stylesheet" href="/src/style.css" />
+</head>
+<body>
+  <canvas id="view"></canvas>
+
+  <div id="hud" class="hidden">
+    <div id="crosshair"><i class="t"></i><i class="r"></i><i class="b"></i><i class="l"></i><b></b></div>
+    <div id="hitmarker"></div>
+    <div id="damage-dirs"></div>
+    <div id="hurt"></div>
+    <div id="barrier-warn" class="hidden" data-i18n="barrier">CONTAINMENT FIELD — TURN BACK</div>
+
+    <div id="compass"><div id="compass-tape"></div><i class="needle"></i></div>
+    <div id="markers"></div>
+    <div id="interact" class="hidden"><kbd>E</kbd><span id="interact-text"></span><div class="bar"><i id="interact-fill"></i></div></div>
+    <div id="radio"><span id="radio-who"></span><span id="radio-line"></span></div>
+    <div id="top">
+      <div id="wave-label"></div>
+      <div id="hostiles"><span id="hostile-count">0</span> <span data-i18n="hostile">HOSTILE</span></div>
+    </div>
+    <div id="banner"><div id="banner-title"></div><div id="banner-sub"></div></div>
+    <div id="toasts"></div>
+
+    <div id="vitals">
+      <div class="label" data-i18n="integrity">INTEGRITY</div>
+      <div class="bar"><div id="health-fill"></div><div id="health-lag"></div></div>
+      <div id="health-num">100</div>
+    </div>
+    <div id="ammo">
+      <div id="weapon-name" data-i18n="weapon">VX-9 PULSE CARBINE</div>
+      <div class="count"><span id="ammo-mag">30</span><span class="sep">/</span><span id="ammo-res">150</span></div>
+      <div id="ammo-pips"></div>
+      <div id="reload-hint" class="hidden"><span data-i18n="reload">RELOAD</span>&nbsp;&nbsp;<kbd>R</kbd></div>
+    </div>
+    <div id="score">0</div>
+    <div id="fps" class="hidden"></div>
+  </div>
+
+  <div id="touch" class="hidden">
+    <div id="t-stick"><i></i></div>
+    <button id="t-fire" data-i18n="t_fire">FIRE</button>
+    <button id="t-aim" data-i18n="t_aim">AIM</button>
+    <button id="t-reload" data-i18n="t_reload">RELOAD</button>
+    <button id="t-jump" data-i18n="t_jump">JUMP</button>
+    <button id="t-use" data-i18n="t_use">USE</button>
+    <button id="t-pause">II</button>
+  </div>
+
+  <div id="loading" class="screen">
+    <div class="brand">
+      <div class="kicker">WESTLAKE UNIVERSITY · YUNGU CAMPUS</div>
+      <h1>RING ZERO</h1>
+    </div>
+    <div class="progress"><div id="load-fill"></div></div>
+    <div id="load-status"></div>
+  </div>
+
+  <div id="menu" class="screen hidden">
+    <div class="panel">
+      <div class="kicker" data-i18n="kicker">WESTLAKE UNIVERSITY · YUNGU CAMPUS · 西湖大学云谷校区</div>
+      <h1>RING ZERO</h1>
+      <p class="brief" data-i18n="brief"></p>
+      <button id="btn-deploy" class="primary" data-i18n="deploy">DEPLOY</button>
+      <div class="cols">
+        <div class="controls">
+          <h3 data-i18n="controls">CONTROLS</h3>
+          <div><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd><span data-i18n="c_move">move</span></div>
+          <div><kbd>Mouse</kbd><span data-i18n="c_mouse">aim · left fire · right aim down sights</span></div>
+          <div><kbd>←</kbd><kbd>→</kbd><kbd>↑</kbd><kbd>↓</kbd><span data-i18n="c_look">turn</span></div>
+          <div><kbd>Shift</kbd><span data-i18n="c_sprint">sprint</span><kbd>Space</kbd><span data-i18n="c_jump">jump</span><kbd>Ctrl</kbd><span data-i18n="c_crouch">crouch</span></div>
+          <div><kbd>E</kbd><span data-i18n="c_interact">cut uplink</span><kbd>R</kbd><span data-i18n="c_reload">reload</span></div>
+          <div><kbd>Esc</kbd><span data-i18n="c_pause">pause</span><kbd>F3</kbd><span data-i18n="c_stats">stats</span></div>
+          <div><span data-i18n="c_pad">Gamepads are supported.</span></div>
+        </div>
+        <div class="settings">
+          <h3 data-i18n="settings">SETTINGS</h3>
+          <label><span data-i18n="s_quality">Graphics</span>
+            <select id="opt-quality">
+              <option value="low" data-i18n="q_low">Low</option><option value="medium" data-i18n="q_medium">Medium</option><option value="high" data-i18n="q_high">High</option><option value="ultra" data-i18n="q_ultra">Ultra</option>
+            </select>
+          </label>
+          <label><span data-i18n="s_sens">Sensitivity</span> <input id="opt-sens" type="range" min="0.3" max="2.5" step="0.05" value="1" /></label>
+          <label><span data-i18n="s_fov">Field of view</span> <input id="opt-fov" type="range" min="60" max="100" step="1" value="74" /></label>
+          <label><span data-i18n="s_vol">Volume</span> <input id="opt-vol" type="range" min="0" max="1" step="0.02" value="0.8" /></label>
+          <label><span data-i18n="s_lang">Language</span>
+            <select id="opt-lang"><option value="en">English</option><option value="zh">简体中文</option></select>
+          </label>
+        </div>
+      </div>
+      <div class="credits" data-i18n="credits"></div>
+    </div>
+  </div>
+
+  <div id="pause" class="screen hidden">
+    <div class="panel small">
+      <h2 data-i18n="paused">PAUSED</h2>
+      <button id="btn-resume" class="primary" data-i18n="resume">RESUME</button>
+      <button id="btn-restart" data-i18n="restart">RESTART</button>
+      <button id="btn-quit" data-i18n="menu">MAIN MENU</button>
+    </div>
+  </div>
+
+  <div id="end" class="screen hidden">
+    <div class="panel small">
+      <div class="kicker" id="end-kicker"></div>
+      <h2 id="end-title"></h2>
+      <div id="end-stats"></div>
+      <button id="btn-again" class="primary"></button>
+      <button id="btn-end-menu" data-i18n="menu">MAIN MENU</button>
+    </div>
+  </div>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
