@@ -34,7 +34,8 @@ if [ -n "${GH_TOKEN:-}" ]; then
   api -X POST "$API/repos/$OWNER/$REPO/keys" -d "{\"title\":\"deploy from dev box\",\"key\":\"$PUB\",\"read_only\":false}" | field title | sed 's/^/deploy key: /' || true
 else
   [ -n "$OWNER" ] || { echo "usage: GH_TOKEN=... $0   or   $0 <owner>" >&2; exit 1; }
-  EMAIL="${WL_EMAIL:-$OWNER@users.noreply.github.com}"
+  # keep the identity of the first (token) deploy if this checkout already has one
+  EMAIL="${WL_EMAIL:-$(git config user.email 2>/dev/null || echo "$OWNER@users.noreply.github.com")}"
 fi
 REMOTE="${WL_REMOTE:-git@github.com:$OWNER/$REPO.git}"
 export GIT_SSH_COMMAND="ssh -i $KEY -o IdentitiesOnly=yes -o StrictHostKeyChecking=accept-new"

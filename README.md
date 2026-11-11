@@ -18,11 +18,13 @@ Enemies are drones only. This is an unofficial fan project and is not affiliated
 The screenshots in `docs/` were rendered on a GPU-less server with a software rasteriser (no
 anisotropic filtering), so a real GPU looks sharper than they do.
 
+**Play it online: <https://wzsyyh.github.io/iWestlake/>** (about 50 MB to download on first visit).
+
 ## Run it
 
-**Easiest: open the single file.** `RING-ZERO_西湖大学云谷校区.html` (52 MB) contains the whole game:
-code, textures, sky, models and baked lighting. Copy it to a machine with a GPU and double-click it
-(Chrome, Edge or Firefox). No server and no install.
+**Offline: build the single file.** `npm run single` writes `RING-ZERO_西湖大学云谷校区.html` (52 MB),
+which contains the whole game: code, textures, sky, models and baked lighting. Copy it to a machine
+with a GPU and double-click it (Chrome, Edge or Firefox). No server and no install.
 
 **Or serve the multi-file build** (sharper 4K sky, faster to load over a network). Requires Node 20+:
 
@@ -112,6 +114,7 @@ Useful commands:
 
 ```bash
 npm run single      # build + pack everything into the one-file HTML
+tools/deploy_pages.sh <owner>   # rebuild and publish: source -> main, built game -> gh-pages
 npm run bake        # re-bake lighting; REQUIRED after any change to level geometry
 npm run assets      # re-download and re-process the CC0 source assets (Python 3 + Pillow, numpy, scipy, fast-simplification)
 npm run playtest    # a bot plays the whole mission headlessly and reports errors (needs Playwright + Chromium)
